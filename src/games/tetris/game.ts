@@ -43,6 +43,7 @@ export interface State {
   lockAccMs: number
   lockActive: boolean
   softDrop: boolean
+  lockId: number
 }
 
 // ── Internal helpers ────────────────────────────────────────────────────────
@@ -163,12 +164,13 @@ function spawnNext(state: State): State {
 
 function doLock(state: State): State {
   if (!state.piece) return state
+  const lockId = state.lockId + 1
   const board = lockPiece(state.board, state.piece)
   const full = fullRows(board)
   if (full.length > 0) {
-    return { ...state, board, piece: null, phase: 'lineclear', clearRows: full, clearMs: LINE_CLEAR_MS }
+    return { ...state, board, piece: null, phase: 'lineclear', clearRows: full, clearMs: LINE_CLEAR_MS, lockId }
   }
-  return spawnNext({ ...state, board, piece: null })
+  return spawnNext({ ...state, board, piece: null, lockId })
 }
 
 function tryRotate(state: State, dir: 1 | -1): State {
@@ -209,6 +211,7 @@ export function createState(): State {
     lockAccMs: 0,
     lockActive: false,
     softDrop: false,
+    lockId: 0,
   }
 }
 

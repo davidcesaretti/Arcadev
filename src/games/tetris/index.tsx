@@ -14,6 +14,7 @@ import {
 } from './constants'
 import type { PieceName } from './constants'
 import { createState, tick, handleInput, type State } from './game'
+import { audio } from './audio'
 
 // ── Color utils ─────────────────────────────────────────────────────────────
 
@@ -259,6 +260,7 @@ export default function TetrisGame() {
   const preview2 = useRef<HTMLCanvasElement>(null)
 
   const stateRef = useRef<State>(createState())
+  const audioStarted = useRef(false)
   const [score, setScore] = useState(0)
   const [isGameOver, setIsGameOver] = useState(false)
   const [ui, setUi] = useState<UiState>({
@@ -281,6 +283,10 @@ export default function TetrisGame() {
       phase: 'playing',
       queue: fresh.queue,
     })
+    if (audioStarted.current) {
+      audio.restart()
+      audio.startMusic()
+    }
   }, [])
 
   const handleRestart = doRestart
@@ -338,6 +344,19 @@ export default function TetrisGame() {
         }
       }
 
+      if (audioStarted.current) {
+        if (s.lockId !== prev.lockId) audio.playLock()
+        if (s.clearRows.length > 0 && prev.clearRows.length === 0)
+          audio.playClear(s.clearRows.length)
+        if (s.phase === 'gameover' && prev.phase !== 'gameover') {
+          audio.stopMusic()
+          audio.playGameOver()
+          setTimeout(() => { if (audioStarted.current) audio.startGameOverMusic() }, 950)
+        }
+        if (s.level !== prev.level)
+          audio.setTempo(Math.min(230, 150 + s.level * 8))
+      }
+
       rafId = requestAnimationFrame(loop)
     }
 
@@ -361,6 +380,13 @@ export default function TetrisGame() {
         'KeyX',
       ]
       if (preventDefaults.includes(e.code)) e.preventDefault()
+
+      if (!audioStarted.current && e.type === 'keydown') {
+        audioStarted.current = true
+        audio.startMusic()
+      } else if (audioStarted.current) {
+        audio.resume()
+      }
 
       if (
         e.repeat &&
