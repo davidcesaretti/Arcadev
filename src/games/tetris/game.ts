@@ -9,6 +9,7 @@ import {
   dropInterval,
   SOFT_DROP_INTERVAL,
   LOCK_DELAY_MS,
+  MAX_LOCK_MOVES,
   LINE_CLEAR_MS,
   PETRIFY_MS,
 } from './constants'
@@ -44,6 +45,7 @@ export interface State {
   lockActive: boolean
   softDrop: boolean
   lockId: number
+  lockMoves: number
 }
 
 // ── Internal helpers ────────────────────────────────────────────────────────
@@ -159,13 +161,19 @@ function spawnNext(state: State): State {
     dropAccMs: 0,
     lockAccMs: 0,
     lockActive: false,
+    lockMoves: 0,
   }
 }
 
 function doLock(state: State): State {
   if (!state.piece) return state
+  // Si la pieza flota, bajarla hasta el suelo antes de fijar (sin devolver control)
+  let piece = state.piece
+  while (!collides(state.board, piece.shape, piece.x, piece.y + 1)) {
+    piece = { ...piece, y: piece.y + 1 }
+  }
   const lockId = state.lockId + 1
-  const board = lockPiece(state.board, state.piece)
+  const board = lockPiece(state.board, piece)
   const full = fullRows(board)
   if (full.length > 0) {
     return { ...state, board, piece: null, phase: 'lineclear', clearRows: full, clearMs: LINE_CLEAR_MS, lockId }
@@ -182,7 +190,8 @@ function tryRotate(state: State, dir: 1 | -1): State {
     const ny = state.piece.y + oy
     if (!collides(state.board, shape, nx, ny)) {
       const piece = { ...state.piece, shape, x: nx, y: ny }
-      return { ...state, piece, ghostY: calcGhostY(state.board, piece), lockAccMs: 0 }
+      const canResetRot = state.lockActive && state.lockMoves < MAX_LOCK_MOVES
+      return { ...state, piece, ghostY: calcGhostY(state.board, piece), lockAccMs: canResetRot ? 0 : state.lockAccMs, lockMoves: canResetRot ? state.lockMoves + 1 : state.lockMoves }
     }
   }
   return state
@@ -212,6 +221,7 @@ export function createState(): State {
     lockActive: false,
     softDrop: false,
     lockId: 0,
+    lockMoves: 0,
   }
 }
 
@@ -294,12 +304,14 @@ export function handleInput(state: State, action: string, down: boolean): State 
     case 'left': {
       if (collides(state.board, state.piece.shape, state.piece.x - 1, state.piece.y)) return state
       const piece = { ...state.piece, x: state.piece.x - 1 }
-      return { ...state, piece, ghostY: calcGhostY(state.board, piece), lockAccMs: 0 }
+      const canResetL = state.lockActive && state.lockMoves < MAX_LOCK_MOVES
+      return { ...state, piece, ghostY: calcGhostY(state.board, piece), lockAccMs: canResetL ? 0 : state.lockAccMs, lockMoves: canResetL ? state.lockMoves + 1 : state.lockMoves }
     }
     case 'right': {
       if (collides(state.board, state.piece.shape, state.piece.x + 1, state.piece.y)) return state
       const piece = { ...state.piece, x: state.piece.x + 1 }
-      return { ...state, piece, ghostY: calcGhostY(state.board, piece), lockAccMs: 0 }
+      const canResetR = state.lockActive && state.lockMoves < MAX_LOCK_MOVES
+      return { ...state, piece, ghostY: calcGhostY(state.board, piece), lockAccMs: canResetR ? 0 : state.lockAccMs, lockMoves: canResetR ? state.lockMoves + 1 : state.lockMoves }
     }
     case 'softdrop':
       return { ...state, softDrop: true }

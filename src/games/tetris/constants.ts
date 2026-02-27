@@ -39,6 +39,7 @@ export function dropInterval(level: number): number {
 }
 
 export const SOFT_DROP_INTERVAL = 25  // ms between drops when holding down
-export const LOCK_DELAY_MS = 400       // ms before piece locks after landing
+export const LOCK_DELAY_MS = 400
+export const MAX_LOCK_MOVES = 1  // una sola corrección permitida por pieza       // ms before piece locks after landing
 export const LINE_CLEAR_MS = 380       // line flash animation duration
 export const PETRIFY_MS = 1600         // petrification animation duration

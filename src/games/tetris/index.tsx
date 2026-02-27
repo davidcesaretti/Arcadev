@@ -261,6 +261,8 @@ export default function TetrisGame() {
 
   const stateRef = useRef<State>(createState())
   const audioStarted = useRef(false)
+  const [isWaiting, setIsWaiting] = useState(true)
+  const waitingRef = useRef(true)
   const [score, setScore] = useState(0)
   const [isGameOver, setIsGameOver] = useState(false)
   const [ui, setUi] = useState<UiState>({
@@ -283,6 +285,8 @@ export default function TetrisGame() {
       phase: 'playing',
       queue: fresh.queue,
     })
+    setIsWaiting(false)
+    waitingRef.current = false
     if (audioStarted.current) {
       audio.restart()
       audio.startMusic()
@@ -310,7 +314,7 @@ export default function TetrisGame() {
       lastTime = now
 
       const prev = stateRef.current
-      stateRef.current = tick(prev, delta)
+      if (!waitingRef.current) stateRef.current = tick(prev, delta)
       const s = stateRef.current
 
       drawBoard(safeCtx, s)
@@ -364,6 +368,7 @@ export default function TetrisGame() {
     return () => {
       running = false
       cancelAnimationFrame(rafId)
+      audio.destroy()
     }
   }, [])
 
@@ -381,12 +386,18 @@ export default function TetrisGame() {
       ]
       if (preventDefaults.includes(e.code)) e.preventDefault()
 
-      if (!audioStarted.current && e.type === 'keydown') {
-        audioStarted.current = true
-        audio.startMusic()
-      } else if (audioStarted.current) {
-        audio.resume()
+      // Pantalla de inicio: solo Enter arranca el juego y la música
+      if (waitingRef.current) {
+        if (e.code === 'Enter' && e.type === 'keydown') {
+          waitingRef.current = false
+          setIsWaiting(false)
+          audioStarted.current = true
+          audio.startMusic()
+        }
+        return
       }
+
+      if (audioStarted.current) audio.resume()
 
       if (
         e.repeat &&
@@ -394,7 +405,6 @@ export default function TetrisGame() {
       )
         return
 
-      // Restart: manejado explícitamente para actualizar React state desde aquí
       if (e.code === 'Enter' && e.type === 'keydown') {
         doRestart()
         return
@@ -498,6 +508,21 @@ export default function TetrisGame() {
           ))}
 
           {/* Game over overlay */}
+          {isWaiting && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 backdrop-blur-sm">
+              <p
+                className="font-arcade text-2xl font-bold tracking-widest mb-1"
+                style={{ color: '#00ffe7', textShadow: '0 0 20px #00ffe7, 0 0 40px #00ffe760' }}
+              >
+                TETRIS
+              </p>
+              <div className="w-24 h-px bg-[#00ffe7]/40 mb-4" />
+              <p className="font-arcade text-[10px] tracking-widest text-zinc-400 animate-pulse">
+                PRESS ENTER TO START
+              </p>
+            </div>
+          )}
+
           {isGameOver && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 backdrop-blur-sm">
               <p
