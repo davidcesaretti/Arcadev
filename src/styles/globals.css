@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+:root {
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #020408;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Scanlines overlay */
+.scanlines::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.08) 2px,
+    rgba(0, 0, 0, 0.08) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Glitch title animation */
+@keyframes glitch-1 {
+  0%, 100% { clip-path: inset(0 0 95% 0); transform: translateX(0); }
+  10%       { clip-path: inset(10% 0 85% 0); transform: translateX(-4px); }
+  20%       { clip-path: inset(40% 0 50% 0); transform: translateX(4px); }
+  30%       { clip-path: inset(80% 0 5% 0); transform: translateX(-2px); }
+  40%       { clip-path: inset(20% 0 70% 0); transform: translateX(0); }
+}
+
+@keyframes glitch-2 {
+  0%, 100% { clip-path: inset(50% 0 30% 0); transform: translateX(0); }
+  15%       { clip-path: inset(5% 0 90% 0); transform: translateX(3px); }
+  35%       { clip-path: inset(70% 0 10% 0); transform: translateX(-3px); }
+  55%       { clip-path: inset(30% 0 60% 0); transform: translateX(2px); }
+}
+
+@keyframes flicker {
+  0%, 95%, 100% { opacity: 1; }
+  96%            { opacity: 0.85; }
+  97%            { opacity: 1; }
+  98%            { opacity: 0.7; }
+  99%            { opacity: 1; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { text-shadow: 0 0 10px #00ffe7, 0 0 30px #00ffe7, 0 0 60px #00ffe7; }
+  50%       { text-shadow: 0 0 20px #00ffe7, 0 0 60px #00ffe7, 0 0 100px #00ffe7; }
+}
+
+@keyframes border-run {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 300% 0%; }
+}
+
+@keyframes float-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes card-glow {
+  0%, 100% { box-shadow: 0 0 15px rgba(0,255,231,0.05); }
+  50%       { box-shadow: 0 0 30px rgba(0,255,231,0.12); }
+}
+
+@keyframes stars-drift {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-50%); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.font-arcade {
+  font-family: 'Orbitron', monospace;
+}
+
+.font-hud {
+  font-family: 'Rajdhani', system-ui, sans-serif;
+}
+
+.title-glitch {
+  position: relative;
+  animation: flicker 6s infinite;
+}
+
+.title-glitch::before,
+.title-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: #00ffe7;
+}
+
+.title-glitch::before {
+  animation: glitch-1 4s infinite;
+  color: #ff006e;
+  left: 2px;
+}
+
+.title-glitch::after {
+  animation: glitch-2 4s infinite;
+  color: #00ffe7;
+  left: -2px;
+}
+
+.glow-text {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.card-animate {
+  animation: float-up 0.5s ease-out both, card-glow 4s ease-in-out infinite;
+}
+
+.card-border-run {
+  background: linear-gradient(90deg, transparent 0%, #00ffe7 25%, #bf00ff 50%, #ff006e 75%, transparent 100%);
+  background-size: 300% 100%;
+  animation: border-run 3s linear infinite;
+}
+
+.stars-layer {
+  animation: stars-drift 60s linear infinite;
+}
