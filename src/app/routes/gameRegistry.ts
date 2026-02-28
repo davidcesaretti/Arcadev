@@ -10,11 +10,11 @@ export const GAMES: GameMeta[] = [
     kind: '2d',
   },
   {
-    id: 'target-range-3d',
-    slug: 'target-range-3d',
-    title: 'Target Range 3D',
-    description: 'Dispara a objetivos en 3D. Stub: haz click para sumar puntos.',
-    kind: '3d',
+    id: 'snake',
+    slug: 'snake',
+    title: 'Snake',
+    description: 'Guía la serpiente para comer y crecer. Elige tu velocidad y no te choques.',
+    kind: '2d',
   },
   {
     id: 'ring-flight',
@@ -32,6 +32,6 @@ export type GameLoader = () => Promise<{ default: ComponentType<Record<string, n
 
 export const gameLoaders: Record<string, GameLoader> = {
   tetris: () => import('../../games/tetris'),
-  'target-range-3d': () => import('../../games/target-range-3d'),
+  'snake': () => import('../../games/snake'),
   'ring-flight': () => import('../../games/ring-flight'),
 }
