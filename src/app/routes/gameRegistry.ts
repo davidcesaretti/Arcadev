@@ -6,7 +6,7 @@ export const GAMES: GameMeta[] = [
     id: 'tetris',
     slug: 'tetris',
     title: 'Tetris',
-    description: 'Clásico puzzle de bloques. Stub: score sube cada segundo.',
+    description: 'Classic block puzzle. Complete lines to score points.',
     kind: '2d',
   },
   {
@@ -14,14 +14,14 @@ export const GAMES: GameMeta[] = [
     slug: 'snake',
     title: 'Snake',
     description:
-      'Guía la serpiente para comer y crecer. Elige tu velocidad y no te choques.',
+      'Guide the snake to eat and grow. Choose your speed and don’t crash.',
     kind: '2d',
   },
   {
     id: 'ring-flight',
     slug: 'ring-flight',
     title: 'Ring Flight',
-    description: 'Pilotea un avión y pasa por los aros para sumar puntos.',
+    description: 'Pilot a plane and fly through rings to score points.',
     kind: '3d',
   },
 ]

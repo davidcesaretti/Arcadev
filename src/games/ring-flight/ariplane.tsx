@@ -2,7 +2,8 @@ import { useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { useRef } from 'react'
 import { Matrix4, Quaternion, Vector3, type Group, type Mesh } from 'three'
-import { updatePlaneAxis } from './controls'
+import { updatePlaneAxis, turbo } from './controls'
+import { audioManager } from '../../audio/AudioManager'
 
 const x = new Vector3(1, 0, 0)
 const y = new Vector3(0, 1, 0)
@@ -70,6 +71,11 @@ export function Airplane(props: Record<string, unknown>) {
     camera.matrixWorldNeedsUpdate = true
 
     if (helixMeshRef.current) helixMeshRef.current.rotation.z -= 1.0
+
+    // Actualizar parámetros de audio por frame
+    // turbo 0..1 → speedNormalized 0.3..1.0 (el avión siempre avanza)
+    const speedNormalized = 0.3 + turbo * 0.7
+    audioManager.setEngineParams(speedNormalized, turbo > 0.05)
   })
 
   const supports = nodes.supports as Mesh
