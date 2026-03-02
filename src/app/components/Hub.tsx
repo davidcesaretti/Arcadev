@@ -15,7 +15,10 @@ function Background() {
   }))
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden>
+    <div
+      className="fixed inset-0 overflow-hidden pointer-events-none"
+      aria-hidden
+    >
       {/* Deep space gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#020408] via-[#040d1a] to-[#020408]" />
 
@@ -36,7 +39,10 @@ function Background() {
       />
 
       {/* Drifting stars */}
-      <div className="stars-layer absolute top-0 left-0 w-full" style={{ height: '200%' }}>
+      <div
+        className="stars-layer absolute top-0 left-0 w-full"
+        style={{ height: '200%' }}
+      >
         {stars.map((s) => (
           <div
             key={s.id}
@@ -101,9 +107,7 @@ function GameCard({ game, index }: { game: GameMeta; index: number }) {
       <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#00ffe7]/60" />
 
       {/* Hover glow overlay */}
-      <div
-        className="absolute inset-0 bg-[#00ffe7]/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-      />
+      <div className="absolute inset-0 bg-[#00ffe7]/[0.03] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
       <div className="relative p-6 flex flex-col h-full">
         {/* Index + badge row */}
@@ -156,9 +160,9 @@ function ArcadeLogo() {
       <div className="relative inline-block">
         <h1
           className="title-glitch font-arcade text-[clamp(3rem,10vw,7rem)] font-black tracking-widest text-[#00ffe7] glow-text leading-none"
-          data-text="ARCADE"
+          data-text="ARCADEV"
         >
-          ARCADE
+          ARCADEV
         </h1>
       </div>
 

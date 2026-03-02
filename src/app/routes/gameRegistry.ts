@@ -13,7 +13,8 @@ export const GAMES: GameMeta[] = [
     id: 'snake',
     slug: 'snake',
     title: 'Snake',
-    description: 'Guía la serpiente para comer y crecer. Elige tu velocidad y no te choques.',
+    description:
+      'Guía la serpiente para comer y crecer. Elige tu velocidad y no te choques.',
     kind: '2d',
   },
   {
@@ -28,10 +29,12 @@ export const GAMES: GameMeta[] = [
 export const GAME_SLUGS = GAMES.map((g) => g.slug)
 export const GAME_BY_SLUG = new Map(GAMES.map((g) => [g.slug, g]))
 
-export type GameLoader = () => Promise<{ default: ComponentType<Record<string, never>> }>
+export type GameLoader = () => Promise<{
+  default: ComponentType<Record<string, never>>
+}>
 
 export const gameLoaders: Record<string, GameLoader> = {
   tetris: () => import('../../games/tetris'),
-  'snake': () => import('../../games/snake'),
+  snake: () => import('../../games/snake'),
   'ring-flight': () => import('../../games/ring-flight'),
 }

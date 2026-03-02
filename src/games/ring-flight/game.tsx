@@ -3,8 +3,13 @@ import {
   OrbitControls,
   PerspectiveCamera,
 } from '@react-three/drei'
+import { EffectComposer, HueSaturation } from '@react-three/postprocessing'
+import { BlendFunction } from 'postprocessing'
+import { MotionBlur } from './motionBlur'
 import { SphereEnv } from './sphereEnv'
 import { Landscape } from './landScape'
+import { Airplane } from './ariplane'
+import { Targets } from './targets'
 
 function FlightGame() {
   return (
@@ -18,6 +23,8 @@ function FlightGame() {
       <OrbitControls target={[0, 0, 0]} />
 
       <Landscape />
+      <Airplane />
+      <Targets />
 
       <directionalLight
         castShadow
@@ -34,6 +41,15 @@ function FlightGame() {
         shadow-camera-top={6}
         shadow-camera-bottom={-6}
       />
+
+      <EffectComposer>
+        <MotionBlur />
+        <HueSaturation
+          blendFunction={BlendFunction.NORMAL}
+          hue={-0.15}
+          saturation={0.1}
+        />
+      </EffectComposer>
     </>
   )
 }
